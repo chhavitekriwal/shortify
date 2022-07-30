@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const urlSchema = new mongoose.Schema({
     longUrl: String,
     urlCode: String,
-    dateCreated: {type: String, default: Date.now}
-})
+},{timestamps:true});
 
 const Url = mongoose.model('Url', urlSchema);
 
