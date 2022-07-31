@@ -18,7 +18,7 @@ const initSupertokens = () => {
             apiDomain: process.env.BACKEND_URL,
             websiteDomain: process.env.FRONTEND_URL,
             apiBasePath: "/api",
-            websiteBasePath: "/auth",
+            //websiteBasePath: "/auth",
         },
         recipeList: [
             EmailPassword.init({

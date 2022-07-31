@@ -7,23 +7,43 @@ const baseUrl = process.env.BASE_URL || `localhost:${PORT}`;
 const shortenUrl = async (req,res) => {
     try {
         const longUrl = req.body.longUrl;
-        if(validUrl.isUri(baseUrl)) {
-            const result = await Url.findOne({longUrl: longUrl});
+        const user = req?.session?.getUserId();
+        if(!validUrl.isUri(baseUrl)) throw new Error("Invalid Base URL");
+        if(!user) {
+            const result = await Url.findOne({longUrl: longUrl,reg:true});
             if(result){
                 console.log(baseUrl+'/'+result.urlCode);
-                res.json(result);
-            } else {
+                res.status(200).json(result);
+            }
+            else {
                 const code = shortid.generate();
                 const result = new Url({
                     longUrl: longUrl,
-                    urlCode: code
+                    urlCode: code,
+                    reg:true
                 })
                 await result.save();
                 console.log(baseUrl+'/'+code);
                 res.json(result);
             }
-        }else {
-            res.status(401).json('Invalid base URL');
+        }
+        else {
+            const result = await Url.findOne({longUrl: longUrl,reg:false});
+            if(result){
+                console.log(baseUrl+'/'+result.urlCode);
+                res.status(200).json(result);
+            } 
+            else {
+                const code = shortid.generate();
+                const result = new Url({
+                    longUrl: longUrl,
+                    urlCode: code,
+                    reg:false
+                })
+                await result.save();
+                console.log(baseUrl+'/'+code);
+                res.json(result);
+            }
         }
     } catch(err) {
         res.status(500).json('Server error');
